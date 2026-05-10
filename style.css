@@ -1,0 +1,31 @@
+body { margin: 0; font-family: Arial; display: flex; flex-direction: column; height: 100vh; }
+.game-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; padding: 2rem; }
+@media (max-width: 768px) { .game-grid { grid-template-columns: 1fr; } }
+canvas { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+
+.game-card {
+    padding: 2rem 1rem;
+    background: linear-gradient(135deg, #99aabb, #aa99bb); /* 그라데이션 */
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
+    font-weight: bold;
+    font-size:20px
+}
+
+.game-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+}
+
+nav {
+    background: linear-gradient(45deg, #ccaaff 0%, #eeddff 50%, #ccaaff 100%);
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;
+}

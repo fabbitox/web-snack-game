@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>We Are One! EXO Puzzle Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-container">
+        <div id="top-bar">
+            <h1>We Are One!</h1>
+            <div id="top-actions">
+                <span id="game-over" style="display: none;">게임 오버!</span>
+                <button id="reset-btn">다시하기</button>
+            </div>
+        </div>
+        <div id="status-bar">
+            <div id="next-block">다음 블록: <span id="next-letter"></span></div>
+            <div id="score">점수: 0</div>
+            <div id="combo">콤보: 0</div>
+        </div>
+        <div id="board"></div>
+    </div>
+    <audio id="E" src="audio/E.mp3" preload="auto"></audio>
+    <audio id="X" src="audio/X.mp3" preload="auto"></audio>
+    <audio id="O" src="audio/O.mp3" preload="auto"></audio>
+    <audio id="exo0" src="audio/2013년은엑소의해다.mp3" preload="auto"></audio>
+    <audio id="exo1" src="audio/아사랑해요.mp3" preload="auto"></audio>
+    <audio id="exo2" src="audio/엑소-위아원처하자.mp3" preload="auto"></audio>
+    <audio id="exo3" src="audio/엑소사랑하자.mp3" preload="auto"></audio>
+    <audio id="exo4" src="audio/영원하자.mp3" preload="auto"></audio>
+    <audio id="exo5" src="audio/영원하자forever.mp3" preload="auto"></audio>
+    <audio id="exo6" src="audio/우리는영원한엑소.mp3" preload="auto"></audio>
+    <audio id="exo7" src="audio/위아원.mp3" preload="auto"></audio>
+    <script src="game.js"></script>
+</body>
+</html>
