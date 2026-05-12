@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>음 이름 맞히기</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-game="note">
+    <nav><h1>음 이름 맞히기</h1></nav>
+    <main class="container">
+        <section class="game-panel">
+            <div class="game-instruction">
+                <p>버튼을 눌러 음을 들으세요. 3옥타브부터 5옥타브까지 여러 음 중 하나를 입력하면 정답 여부를 알려드립니다.</p>
+            </div>
+            <div class="note-controls">
+                <button id="play-note-btn" type="button">음 재생</button>
+            </div>
+            <div class="visualization">
+                <canvas id="note-keyboard" width="360" height="180"></canvas>
+            </div>
+            <div class="button-row">
+                <button id="retry-btn" type="button" class="secondary">다시하기</button>
+                <button type="button" class="secondary" onclick="location.href='../index.html'">메인으로</button>
+            </div>
+            <form id="answer-form" class="controls">
+                <label>
+                    예상 음 이름
+                    <input id="answer-note" type="text" placeholder="예: C4, C#4" autocomplete="off">
+                </label>
+                <button type="submit">제출</button>
+            </form>
+            <div id="feedback" class="feedback"></div>
+        </section>
+    </main>
+    <script src="game.js"></script>
+</body>
+</html>

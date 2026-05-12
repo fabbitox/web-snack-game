@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>색상 RGB 맞히기</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-game="color">
+    <nav><h1>RGB 색상 맞히기</h1></nav>
+    <main class="container">
+        <section class="game-panel">
+            <div class="game-instruction">
+                <p>보여드린 색을 보고 R, G, B 숫자 값을 맞혀보세요. 정확히 맞히면 정답이라고 알려드립니다.</p>
+            </div>
+            <div class="visualization">
+                <div id="color-swatch" class="color-swatch"></div>
+            </div>
+            <div class="button-row">
+                <button id="retry-btn" type="button" class="secondary">다시하기</button>
+                <button type="button" class="secondary" onclick="location.href='../index.html'">메인으로</button>
+            </div>
+            <form id="answer-form" class="controls">
+                <div class="form-row">
+                    <label>
+                        R
+                        <input id="input-r" type="number" min="0" max="255" placeholder="0~255" autocomplete="off">
+                    </label>
+                    <label>
+                        G
+                        <input id="input-g" type="number" min="0" max="255" placeholder="0~255" autocomplete="off">
+                    </label>
+                    <label>
+                        B
+                        <input id="input-b" type="number" min="0" max="255" placeholder="0~255" autocomplete="off">
+                    </label>
+                </div>
+                <button type="submit">제출</button>
+            </form>
+            <div id="feedback" class="feedback"></div>
+        </section>
+    </main>
+    <script src="game.js"></script>
+</body>
+</html>

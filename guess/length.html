@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>길이 맞히기</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body data-game="length">
+    <nav><h1>길이 맞히기</h1></nav>
+    <main class="container">
+        <section class="game-panel">
+            <div class="game-instruction">
+                <p>오른쪽에 표시된 1cm 기준선과 비교해서 전체 길이를 센티미터 단위로 맞혀보세요.</p>
+            </div>
+            <div class="visualization">
+                <canvas id="visual-canvas" width="360" height="220"></canvas>
+            </div>
+            <div class="button-row">
+                <button id="retry-btn" type="button" class="secondary">다시하기</button>
+                <button type="button" class="secondary" onclick="location.href='../index.html'">메인으로</button>
+            </div>
+            <form id="answer-form" class="controls">
+                <label>
+                    예상 길이 (cm)
+                    <input id="answer-input" type="number" step="0.1" placeholder="예: 12.5" autocomplete="off">
+                </label>
+                <button type="submit">제출</button>
+            </form>
+            <div id="feedback" class="feedback"></div>
+        </section>
+    </main>
+    <script src="game.js"></script>
+</body>
+</html>
