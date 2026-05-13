@@ -41,6 +41,8 @@ const colorSwatch = document.getElementById('color-swatch');
 const noteCanvas = document.getElementById('note-keyboard');
 const retryBtn = document.getElementById('retry-btn');
 
+let submitEnabled = true;
+
 function initGame() {
     attachListeners();
     loadProblem();
@@ -61,6 +63,7 @@ function attachListeners() {
 }
 
 function loadProblem() {
+    submitEnabled = true;
     clearFeedback();
     resetInputs();
 
@@ -68,19 +71,6 @@ function loadProblem() {
     else if (gameType === 'length') setupLengthProblem();
     else if (gameType === 'color') setupColorProblem();
     else if (gameType === 'note') setupNoteProblem();
-}
-
-function retryAnswer() {
-    clearFeedback();
-    resetInputs();
-    feedbackEl.textContent = '다시 입력해 보세요.';
-}
-
-function revealAnswer() {
-    if (gameType === 'angle') feedbackEl.textContent = `정답: ${state.answer}° 입니다.`;
-    else if (gameType === 'length') feedbackEl.textContent = `정답: ${state.answer.toFixed(1)} cm 입니다.`;
-    else if (gameType === 'color') feedbackEl.textContent = `정답: R ${state.answer.r}, G ${state.answer.g}, B ${state.answer.b}`;
-    else if (gameType === 'note') feedbackEl.textContent = `정답: ${state.answer}`;
 }
 
 function clearFeedback() {
@@ -96,7 +86,7 @@ function resetInputs() {
 }
 
 function setupAngleProblem() {
-    state.answer = Math.floor(Math.random() * 321) + 20;
+    state.answer = Math.floor(Math.random() * 361);
     drawAngleCanvas(state.answer);
     if (feedbackEl) feedbackEl.textContent = '선을 보고 각도를 맞혀보세요.';
 }
@@ -249,9 +239,9 @@ function drawNoteKeyboard() {
 
 function setupColorProblem() {
     state.answer = {
-        r: Math.floor(Math.random() * 216) + 20,
-        g: Math.floor(Math.random() * 216) + 20,
-        b: Math.floor(Math.random() * 216) + 20
+        r: Math.floor(Math.random() * 256),
+        g: Math.floor(Math.random() * 256),
+        b: Math.floor(Math.random() * 256)
     };
     if (colorSwatch) colorSwatch.style.background = `rgb(${state.answer.r}, ${state.answer.g}, ${state.answer.b})`;
     if (feedbackEl) feedbackEl.textContent = '색을 보고 R, G, B 값을 맞혀보세요.';
@@ -265,6 +255,8 @@ function setupNoteProblem() {
 }
 
 function handleSubmit() {
+    if (!submitEnabled) return;
+
     if (gameType === 'angle') return submitAngle();
     if (gameType === 'length') return submitLength();
     if (gameType === 'color') return submitColor();
@@ -277,9 +269,10 @@ function submitAngle() {
         feedbackEl.textContent = '숫자로 된 각도 값을 입력하세요.';
         return;
     }
-    const diff = Math.abs(guess - state.answer);
-    if (diff === 0) feedbackEl.textContent = `정답입니다! 차이 ${diff.toFixed(1)}°입니다.`;
-    else feedbackEl.textContent = `정답과 ${diff.toFixed(1)}° 차이입니다.`;
+    submitEnabled = false;
+    let diff = Math.abs(guess % 360 - state.answer);
+    if (diff > 180) diff = 360 - diff;
+    feedbackEl.textContent = `정답: ${state.answer}, 점수: ${((1 - diff / 360) * 100).toFixed(1)}`;
 }
 
 function submitLength() {
@@ -288,9 +281,9 @@ function submitLength() {
         feedbackEl.textContent = '센티미터 단위 숫자를 입력하세요.';
         return;
     }
+    submitEnabled = false;
     const diff = Math.abs(guess - state.answer);
-    if (diff < 0.05) feedbackEl.textContent = `정답입니다! 차이 ${diff.toFixed(1)} cm입니다.`;
-    else feedbackEl.textContent = `정답과 ${diff.toFixed(1)} cm 차이입니다.`;
+    feedbackEl.textContent = `정답: ${state.answer}, 점수: ${(Math.max(0,1 - diff / state.answer) * 100).toFixed(1)}`;
 }
 
 function submitColor() {
@@ -301,14 +294,11 @@ function submitColor() {
         feedbackEl.textContent = '0에서 255 사이의 R, G, B 값을 모두 입력하세요.';
         return;
     }
+    submitEnabled = false;
     const dr = Math.abs(r - state.answer.r);
     const dg = Math.abs(g - state.answer.g);
     const db = Math.abs(b - state.answer.b);
-    if (dr === 0 && dg === 0 && db === 0) {
-        feedbackEl.textContent = '정답입니다! 정확하게 RGB 값을 맞히셨습니다.';
-    } else {
-        feedbackEl.textContent = `정답과 R ${dr}, G ${dg}, B ${db} 차이입니다.`;
-    }
+    feedbackEl.textContent = `정답: (${state.answer.r}, ${state.answer.g}, ${state.answer.b}), 점수: ${((1 - (dr + dg + db) / (255 * 3)) * 100).toFixed(1)}`;
 }
 
 function submitNote() {
@@ -323,12 +313,8 @@ function submitNote() {
         return;
     }
     const answerNote = NOTES[state.currentNoteIndex];
-    if (guess === answerNote.name) {
-        feedbackEl.textContent = `정답입니다! 들려준 음은 ${answerNote.name} 입니다.`;
-        return;
-    }
     const diff = Math.abs(guessed.semitone - answerNote.semitone);
-    feedbackEl.textContent = `정답과 ${diff} 반음 차이입니다.`;
+    feedbackEl.textContent = `정답: ${answerNote.name}, 점수: ${(Math.max(0, 1 - diff / 12) * 100).toFixed(1)}`;
 }
 
 function playCurrentNote() {
