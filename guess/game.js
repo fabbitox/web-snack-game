@@ -36,12 +36,15 @@ const inputG = document.getElementById('input-g');
 const inputB = document.getElementById('input-b');
 const noteInput = document.getElementById('answer-note');
 const playBtn = document.getElementById('play-note-btn');
+const playBtn2 = document.getElementById('note-submit');
 const canvas = document.getElementById('visual-canvas');
 const colorSwatch = document.getElementById('color-swatch');
+const colorSubmit = document.getElementById('color-submit');
 const noteCanvas = document.getElementById('note-keyboard');
 const retryBtn = document.getElementById('retry-btn');
 
 let submitEnabled = true;
+let frequency = null;
 
 function initGame() {
     attachListeners();
@@ -60,6 +63,7 @@ function attachListeners() {
         loadProblem();
     });
     if (playBtn) playBtn.addEventListener('click', playCurrentNote);
+    if (playBtn2) playBtn2.addEventListener('click', () => playNote(frequency));
 }
 
 function loadProblem() {
@@ -67,6 +71,7 @@ function loadProblem() {
     clearFeedback();
     resetInputs();
 
+    retryBtn.style.background = '#6b7c9d';
     if (gameType === 'angle') setupAngleProblem();
     else if (gameType === 'length') setupLengthProblem();
     else if (gameType === 'color') setupColorProblem();
@@ -118,12 +123,7 @@ function drawAngleCanvas(angle) {
     ctx.stroke();
 
     ctx.strokeStyle = '#5d7cff';
-    ctx.lineWidth = 6;
-    ctx.beginPath();
-    ctx.moveTo(centerX, centerY);
-    const rad = angle * (Math.PI / 180);
-    ctx.lineTo(centerX + Math.cos(rad) * radius, centerY - Math.sin(rad) * radius);
-    ctx.stroke();
+    drawAngle(ctx, centerX, centerY, angle, radius);
 
     ctx.fillStyle = '#4f6ef7';
     ctx.beginPath();
@@ -133,6 +133,15 @@ function drawAngleCanvas(angle) {
     ctx.fillStyle = '#2a3252';
     ctx.font = '600 14px Arial';
     ctx.fillText('기준선', centerX + radius - 18, centerY + 22);
+}
+
+function drawAngle(ctx, centerX, centerY, angle, radius) {
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    ctx.moveTo(centerX, centerY);
+    const rad = angle * (Math.PI / 180);
+    ctx.lineTo(centerX + Math.cos(rad) * radius, centerY - Math.sin(rad) * radius);
+    ctx.stroke();
 }
 
 function setupLengthProblem() {
@@ -149,7 +158,7 @@ function drawLengthCanvas(lengthCm) {
     const left = 30;
     const top = height * 0.55;
     const unitPx = 24;
-    const lineLengthPx = Math.min(lengthCm * unitPx, width - left - 40);
+    const lineLengthPx = lengthCm * unitPx;
     const refX = width - 130;
     const refY = top - 42;
 
@@ -168,12 +177,12 @@ function drawLengthCanvas(lengthCm) {
     ctx.strokeStyle = '#18203d';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(left, top - 18);
-    ctx.lineTo(left, top + 18);
+    ctx.moveTo(left, top - 10);
+    ctx.lineTo(left, top + 10);
     ctx.stroke();
     ctx.beginPath();
-    ctx.moveTo(left + lineLengthPx, top - 18);
-    ctx.lineTo(left + lineLengthPx, top + 18);
+    ctx.moveTo(left + lineLengthPx, top - 10);
+    ctx.lineTo(left + lineLengthPx, top + 10);
     ctx.stroke();
 
     ctx.strokeStyle = '#5d7cff';
@@ -186,12 +195,12 @@ function drawLengthCanvas(lengthCm) {
     ctx.strokeStyle = '#18203d';
     ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.moveTo(refX, refY - 10);
-    ctx.lineTo(refX, refY + 10);
+    ctx.moveTo(refX, refY - 8);
+    ctx.lineTo(refX, refY + 8);
     ctx.stroke();
     ctx.beginPath();
-    ctx.moveTo(refX + unitPx, refY - 10);
-    ctx.lineTo(refX + unitPx, refY + 10);
+    ctx.moveTo(refX + unitPx, refY - 8);
+    ctx.lineTo(refX + unitPx, refY + 8);
     ctx.stroke();
 
     ctx.fillStyle = '#2a3252';
@@ -244,6 +253,7 @@ function setupColorProblem() {
         b: Math.floor(Math.random() * 256)
     };
     if (colorSwatch) colorSwatch.style.background = `rgb(${state.answer.r}, ${state.answer.g}, ${state.answer.b})`;
+    colorSubmit.style.background = '';
     if (feedbackEl) feedbackEl.textContent = '색을 보고 R, G, B 값을 맞혀보세요.';
 }
 
@@ -252,6 +262,8 @@ function setupNoteProblem() {
     state.answer = NOTES[state.currentNoteIndex].name;
     if (feedbackEl) feedbackEl.textContent = '들려주는 음을 듣고 음 이름을 입력하세요.';
     drawNoteKeyboard();
+    playBtn2.style.background = '#6b7c9d';
+    frequency = null;
 }
 
 function handleSubmit() {
@@ -263,16 +275,24 @@ function handleSubmit() {
     if (gameType === 'note') return submitNote();
 }
 
+function gameSet() {
+    submitEnabled = false;
+    retryBtn.style.background = '#a28300';
+}
+
 function submitAngle() {
     const guess = parseFloat(answerInput?.value);
     if (Number.isNaN(guess)) {
         feedbackEl.textContent = '숫자로 된 각도 값을 입력하세요.';
         return;
     }
-    submitEnabled = false;
+    gameSet();
     let diff = Math.abs(guess % 360 - state.answer);
     if (diff > 180) diff = 360 - diff;
     feedbackEl.textContent = `정답: ${state.answer}, 점수: ${((1 - diff / 360) * 100).toFixed(1)}`;
+    const ctx = canvas.getContext('2d');
+    ctx.strokeStyle = '#a04dff';
+    drawAngle(ctx, canvas.width / 2, canvas.height / 2, guess, Math.min(canvas.width, canvas.height) * 0.38);
 }
 
 function submitLength() {
@@ -281,9 +301,17 @@ function submitLength() {
         feedbackEl.textContent = '센티미터 단위 숫자를 입력하세요.';
         return;
     }
-    submitEnabled = false;
+    gameSet();
     const diff = Math.abs(guess - state.answer);
     feedbackEl.textContent = `정답: ${state.answer}, 점수: ${(Math.max(0,1 - diff / state.answer) * 100).toFixed(1)}`;
+    const ctx = canvas.getContext('2d');
+    ctx.strokeStyle = '#a04dff';
+    ctx.lineWidth = 7;
+    ctx.beginPath();
+    const top = canvas.height * 0.7;
+    ctx.moveTo(30, top);
+    ctx.lineTo(30 + guess * 24, top);
+    ctx.stroke();
 }
 
 function submitColor() {
@@ -294,11 +322,12 @@ function submitColor() {
         feedbackEl.textContent = '0에서 255 사이의 R, G, B 값을 모두 입력하세요.';
         return;
     }
-    submitEnabled = false;
+    gameSet();
     const dr = Math.abs(r - state.answer.r);
     const dg = Math.abs(g - state.answer.g);
     const db = Math.abs(b - state.answer.b);
     feedbackEl.textContent = `정답: (${state.answer.r}, ${state.answer.g}, ${state.answer.b}), 점수: ${((1 - (dr + dg + db) / (255 * 3)) * 100).toFixed(1)}`;
+    colorSubmit.style.background = `rgb(${r}, ${g}, ${b})`;
 }
 
 function submitNote() {
@@ -312,21 +341,27 @@ function submitNote() {
         feedbackEl.textContent = '알 수 없는 음입니다. C3~B5 범위의 음 이름을 입력하세요.';
         return;
     }
+    gameSet();
     const answerNote = NOTES[state.currentNoteIndex];
     const diff = Math.abs(guessed.semitone - answerNote.semitone);
     feedbackEl.textContent = `정답: ${answerNote.name}, 점수: ${(Math.max(0, 1 - diff / 12) * 100).toFixed(1)}`;
+    playBtn2.style.background = '#a28300';
+    frequency = guessed.freq;
 }
 
 function playCurrentNote() {
     if (gameType !== 'note') return;
     if (!state.currentNoteIndex && state.currentNoteIndex !== 0) return;
 
+    const frequency = NOTES[state.currentNoteIndex].freq;
+    playNote(frequency);
+}
+
+function playNote(frequency) {
     if (!state.audioContext) {
         state.audioContext = new (window.AudioContext || window.webkitAudioContext)();
     }
     const now = state.audioContext.currentTime;
-    const frequency = NOTES[state.currentNoteIndex].freq;
-
     const osc1 = state.audioContext.createOscillator();
     const osc2 = state.audioContext.createOscillator();
     const gain = state.audioContext.createGain();
@@ -356,12 +391,6 @@ function playCurrentNote() {
     osc2.start(now);
     osc1.stop(now + 1.2);
     osc2.stop(now + 1.2);
-
-    osc2.onended = () => {
-        if (feedbackEl && !feedbackEl.textContent) {
-            feedbackEl.textContent = '음이 재생되었습니다. 답을 입력해 보세요.';
-        }
-    };
 }
 
 window.addEventListener('DOMContentLoaded', initGame);
