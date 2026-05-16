@@ -1,7 +1,11 @@
 body { margin: 0; font-family: Arial; display: flex; flex-direction: column; height: 100vh; }
 .game-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; padding: 2rem; }
-@media (max-width: 768px) { .game-grid { grid-template-columns: 1fr; } }
+@media (max-width: 768px) { .game-grid { grid-template-columns: 1fr; } h1 { margin: 0.2rem; } }
 canvas { max-width: 100%; height: auto; display: block; margin: 0 auto; }
+
+* {
+    box-sizing: border-box;
+}
 
 .game-card {
     padding: 2rem 1rem;
@@ -28,4 +32,26 @@ nav {
     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     position: relative;
     overflow: hidden;
+}
+
+.container {
+    width: min(1040px, 100%);
+    margin: 1.25rem auto 2rem;
+    padding: 0 1rem;
+}
+
+.right-top {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    transition: background 0.3s, color 0.3s;
+}
+.right-top:hover {
+    background: rgba(255, 255, 255, 1);
+    color: #000;
 }
