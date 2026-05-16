@@ -145,7 +145,7 @@ function drawAngle(ctx, centerX, centerY, angle, radius) {
 }
 
 function setupLengthProblem() {
-    state.answer = parseFloat((Math.random() * 10 + 5).toFixed(1));
+    state.answer = parseFloat((Math.random() * 8 + 5).toFixed(1));
     drawLengthCanvas(state.answer);
     if (feedbackEl) feedbackEl.textContent = '1cm 기준선과 비교해 전체 길이를 맞혀보세요.';
 }
